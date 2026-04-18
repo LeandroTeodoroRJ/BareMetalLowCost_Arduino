@@ -2,7 +2,7 @@
  * Description: GPIO library
  * Hostpage: https://github.com/LeandroTeodoroRJ/ESP8266
  * Stable: Yes
- * Version: 2.0.0
+ * Version: 2.0.1
  * Last Uptate: 02.04.26
  * Dependences: No
  * Current: Yes
