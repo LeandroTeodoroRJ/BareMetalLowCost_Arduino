@@ -2,7 +2,7 @@
  * Description: GPIO library
  * Hostpage: https://github.com/LeandroTeodoroRJ/ESP8266
  * Stable: Yes
- * Version: 1.1
+ * Version: 2.0.0
  * Last Uptate: 02.04.26
  * Dependences: No
  * Current: Yes
@@ -67,7 +67,7 @@
     bool button_release = TRUE;
   public:
     ClickButton(int level);
-    void button_scan();
+    void button_scan(int (*event)());
     int click_button_event();
     void click_button_finish_event();
  };

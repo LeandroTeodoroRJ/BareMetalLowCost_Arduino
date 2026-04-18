@@ -3,10 +3,10 @@
  * Description: How to use GPIO click button class (push-button modeling)
  * Hostpage: https://github.com/LeandroTeodoroRJ/BareMetalLowCost_Arduino
  * Stable: Yes
- * Version: 1.0.
- * Last Uptate: 02.04.26
+ * Version: 1.0.1
+ * Last Uptate: 17.04.26
  * Dependences: 
- *   -- gpio.h v1.1 
+ *   -- gpio.h v2.0.0 
  *   -- Adafruit SSD1306 v.2.5.14 by Adafruit
  * Current: Yes
  * Maintainer: leandroteodoro.engenharia@gmail.com
@@ -36,6 +36,11 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 int value;
 
+void button_event(){
+  value = value + 1;
+  screen_update();  
+}
+
 void screen_update(){
   display.clearDisplay();
   display.setTextSize(2);
@@ -63,13 +68,5 @@ void setup() {
 }
 
 void loop() {
-  button.button_scan(); 
-  if (button.click_button_event()){
-     value = value + 1;
-     button.click_button_finish_event();
-     screen_update();
-  }
-  else{
-     delayMicroseconds(100);
-  }
+  button.button_scan(button_event);
 }

@@ -1,6 +1,8 @@
 #include "Arduino.h"
 #include "gpio.h"
 
+void button_event();
+
 GPIOPin::GPIOPin(int level){
 	_is_active = level;
 }
@@ -62,7 +64,7 @@ void GPIOOutput::deactivate(){
 
 ClickButton::ClickButton(int level):GPIOInput(level) { }
 
-void ClickButton::button_scan(){
+void ClickButton::button_scan(int (*event)()){
   if (this->isActive()){
     if (this->button_release == TRUE){
       if (this->executed == FALSE){
@@ -79,6 +81,10 @@ void ClickButton::button_scan(){
   else{
     this->activated = FALSE; 
     this->button_release = TRUE;  
+  }
+   if (this->click_button_event()){
+    button_event();
+    this->click_button_finish_event();
   }
 }
 
