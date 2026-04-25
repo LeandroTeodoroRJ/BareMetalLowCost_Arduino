@@ -1,0 +1,2 @@
+Crie um drive para o módulo ADXL345 para o arduino nano, o modulo ADXL345 está ligado pela porta I2C do arduino nano conforme a tabela de conexão do arquivo ADXL345/diagram/arduino_connections.ods
+Deve ser modificado o conteúdo da função adxl_update() sem alterar o nome da função, a função está no arquivo ADXL345/userADXL345.h, a função adxl_update() deve atualizar a variável do tipo float xg_force com a força da gravidade no eixo x, a variável do tipo float yg_force com a força da gravidade no eixo y, a variável do tipo float zg_force com a força da gravidade no eixo z.
