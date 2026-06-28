@@ -39,6 +39,9 @@ void setup() {
 void loop() {
   if (button.isActive()){
     led.activate();       //Remember... LED is active in high level
+    delayMicroseconds(500);
+    led.deactivate();
+    delayMicroseconds(500);
   }
   else{
     led.deactivate();
