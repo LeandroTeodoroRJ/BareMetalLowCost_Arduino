@@ -3,8 +3,8 @@
  * Description: How transfer bytes as integer type using Linux
  * Hostpage: https://github.com/LeandroTeodoroRJ/BareMetalLowCost_Arduino
  * Stable: Yes
- * Version: 1.0.0
- * Last Uptate: 25.06.26
+ * Version: 1.1.0
+ * Last Uptate: 27.06.26
  * Dependences: No
  * Current: Yes
  * Maintainer: leandroteodoro.engenharia@gmail.com
@@ -89,6 +89,7 @@ int output = 0;
 
 void setup() {
   Serial.begin(115200);
+  Serial.setTimeout(50);
   delay(0.3);
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -132,16 +133,11 @@ String int_to_hex_string(int value) {
 void port_status(){
   String out_message = int_to_hex_string(input);
   out_message = out_message + int_to_hex_string(output);
-  Serial.print("\nStatus ports - ");
   Serial.print(out_message);
 }
 
 void command_action(){
-  if (buffer_receiver[0] == 0x01){
-    digitalWrite(LED_BUILTIN, HIGH);
-  }else if (buffer_receiver[0] == 0x02){
-    digitalWrite(LED_BUILTIN, LOW);
-  }else if (buffer_receiver[0] == 0x23){
+  if (buffer_receiver[0] == 0x23){
     port_status();
   }else if (buffer_receiver[0] == 0x24){
     output = buffer_receiver[1];  //Only led buid-in 0x08
