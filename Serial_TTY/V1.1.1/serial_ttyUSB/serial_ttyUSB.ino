@@ -3,7 +3,7 @@
  * Description: How transfer bytes as integer type using Linux
  * Hostpage: https://github.com/LeandroTeodoroRJ/BareMetalLowCost_Arduino
  * Stable: Yes
- * Version: 1.1.0
+ * Version: 1.1.1
  * Last Uptate: 27.06.26
  * Dependences: No
  * Current: Yes
@@ -89,7 +89,7 @@ int output = 0;
 
 void setup() {
   Serial.begin(115200);
-  Serial.setTimeout(50);
+  Serial.setTimeout(10);
   delay(0.3);
   pinMode(LED_BUILTIN, OUTPUT);
 
