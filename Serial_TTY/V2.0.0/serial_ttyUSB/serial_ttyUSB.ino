@@ -4,8 +4,9 @@
  * Hostpage: https://github.com/LeandroTeodoroRJ/BareMetalLowCost_Arduino
  * Stable: Yes
  * Version: 2.0.0
- * Last Uptate: 25.06.26
- * Dependences: No
+ * Last Uptate: 27.06.26
+ * Dependences:
+ *   -- gpio v2.0.1
  * Current: Yes
  * Maintainer: leandroteodoro.engenharia@gmail.com
  * Architecture: Arduino Nano v3
@@ -19,6 +20,8 @@
  *  -- To configure baud rate terminal: $stty -F ttyUSB0 115200 
  *  -- To listen serial ttyUSB use minicom: $sudo minicom -b 115200 -D /dev/ttyUSB0
  *  -- To send byte, as root: #echo -ne 2$08  > /dev/ttyUSB0
+ *  -- To this version X0 is user to rotary encoder Phase A and X1 is used
+ *     to Phase B.
  *
  *  Strategies to send hexa byte by serial port
     1- Send as string:
@@ -39,7 +42,7 @@
       The receive wait the time out acept dataframe.
  */
 
-
+#import "gpio.h"
 
 #define received_new_data 1
 #define FAST_INPUT DEBOUNCE_NOT_ACTIVE
@@ -63,55 +66,65 @@
 #define GPIO_16   16
 #define GPIO_17   17
 
-#define  X0 GPIO_2
-#define  X1 GPIO_3
-#define  X2 GPIO_4
-#define  X3 GPIO_5
-#define  X4 GPIO_6
-#define  X5 GPIO_7
-#define  X6 GPIO_8
-#define  X7 GPIO_9
+ClickButton X0(ACTIVE_LOW_LEVEL);
+GPIOInput X1(ACTIVE_LOW_LEVEL);
+GPIOInput X2(ACTIVE_LOW_LEVEL);
+GPIOInput X3(ACTIVE_LOW_LEVEL);
+GPIOInput X4(ACTIVE_LOW_LEVEL);
+GPIOInput X5(ACTIVE_LOW_LEVEL);
+GPIOInput X6(ACTIVE_LOW_LEVEL);
+GPIOInput X7(ACTIVE_LOW_LEVEL);
 
-#define  Y0 GPIO_10
-#define  Y1 GPIO_11
-#define  Y2 GPIO_12
-#define  Y3 GPIO_13
-#define  Y4 GPIO_14
-#define  Y5 GPIO_15
-#define  Y6 GPIO_16
-#define  Y7 GPIO_17
+GPIOOutput Y0(ACTIVE_HIGH_LEVEL);
+GPIOOutput Y1(ACTIVE_HIGH_LEVEL);
+GPIOOutput Y2(ACTIVE_HIGH_LEVEL);
+GPIOOutput Y3(ACTIVE_HIGH_LEVEL);
+GPIOOutput Y4(ACTIVE_HIGH_LEVEL);
+GPIOOutput Y5(ACTIVE_HIGH_LEVEL);
+GPIOOutput Y6(ACTIVE_HIGH_LEVEL);
+GPIOOutput Y7(ACTIVE_HIGH_LEVEL);
 
 String str_serial_receiver;
 int buffer_receiver[10];
 int insert_value;
 int input;  //Input port status byte
 int output = 0;
+uint16_t encoder_count = 32000;
 
 void setup() {
   Serial.begin(115200);
-  Serial.setTimeout(50);
+  Serial.setTimeout(10);
   delay(0.3);
   pinMode(LED_BUILTIN, OUTPUT);
 
   /* Configure input pins*/
-  pinMode(X0, INPUT);
-  pinMode(X1, INPUT);
-  pinMode(X2, INPUT);
-  pinMode(X3, INPUT);
-  pinMode(X4, INPUT);
-  pinMode(X5, INPUT);
-  pinMode(X6, INPUT);
-  pinMode(X7, INPUT);
+  X0.setPin(GPIO_2);
+  X1.setPin(GPIO_3);
+  X2.setPin(GPIO_4);
+  X3.setPin(GPIO_5);
+  X4.setPin(GPIO_6);
+  X5.setPin(GPIO_7);
+  X6.setPin(GPIO_8);
+  X7.setPin(GPIO_9);
+
+  X0.setDebounce(FAST_INPUT); 
+  X1.setDebounce(FAST_INPUT);
+  X2.setDebounce(FAST_INPUT);    
+  X3.setDebounce(FAST_INPUT);      
+  X4.setDebounce(FAST_INPUT);
+  X5.setDebounce(FAST_INPUT);
+  X6.setDebounce(FAST_INPUT);
+  X7.setDebounce(FAST_INPUT);
 
   /* Configure output pins*/
-  pinMode(Y0, OUTPUT);
-  pinMode(Y1, OUTPUT);
-  pinMode(Y2, OUTPUT);
-  pinMode(Y3, OUTPUT);
-  pinMode(Y4, OUTPUT);
-  pinMode(Y5, OUTPUT);
-  pinMode(Y6, OUTPUT);
-  pinMode(Y7, OUTPUT);
+  Y0.setPin(GPIO_10);
+  Y1.setPin(GPIO_11);
+  Y2.setPin(GPIO_12);
+  Y3.setPin(GPIO_13);
+  Y4.setPin(GPIO_14);
+  Y5.setPin(GPIO_15);
+  Y6.setPin(GPIO_16);
+  Y7.setPin(GPIO_17);
 }
 
 String int_to_hex_string(int value) {
@@ -127,12 +140,23 @@ void port_status(){
   Serial.print(out_message);
 }
 
+void encoder_status(){
+  char buffer[3];
+  sprintf(buffer, "%06u", encoder_count);
+  String out_message = String(buffer);
+  Serial.print(out_message);
+}
+
 void command_action(){
   if (buffer_receiver[0] == 0x23){
     port_status();
   }else if (buffer_receiver[0] == 0x24){
     output = buffer_receiver[1];  //Only led buid-in 0x08
     output_update();
+  }else if (buffer_receiver[0] == 0x22){
+    encoder_status();
+  }else if (buffer_receiver[0] == 0x21){
+    encoder_count = 32000;  //Reset encoder
   }
 }
 
@@ -170,49 +194,42 @@ void slice_string(String str_to_convert){
 }
 
 void input_update(){
-  if (digitalRead(X0) == 0){
-    bitSet(input, 0);
-  }else{
-    bitClear(input, 0);
-  }
 
-  if (digitalRead(X1) == 0){
-    bitSet(input, 1);
-  }else{
-    bitClear(input, 1);
-  }
+  bitClear(input, 0);   //X0 input used by encoder
 
-  if (digitalRead(X2) == 0){
+  bitClear(input, 1);   //X0 input used by encoder
+
+  if (X2.isActive()){
     bitSet(input, 2);
   }else{
     bitClear(input, 2);
   }
 
-  if (digitalRead(X3) == 0){
+  if (X3.isActive()){
     bitSet(input, 3);
   }else{
     bitClear(input, 3);
   }
 
-  if (digitalRead(X4) == 0){
+  if (X4.isActive()){
     bitSet(input, 4);
   }else{
     bitClear(input, 4);
   }
 
-  if (digitalRead(X5) == 0){
+  if (X5.isActive()){
     bitSet(input, 5);
   }else{
     bitClear(input, 5);
   }
 
-  if (digitalRead(X6) == 0){
+  if (X6.isActive()){
     bitSet(input, 6);
   }else{
     bitClear(input, 6);
   }
 
-  if (digitalRead(X7) == 0){
+  if (X7.isActive()){
     bitSet(input, 7);
   }else{
     bitClear(input, 7);
@@ -221,51 +238,59 @@ void input_update(){
 
 void output_update(){
   if (bitRead(output, 0) == 1){
-    digitalWrite(Y0, HIGH);
+    Y0.activate();
   }else{
-    digitalWrite(Y0, LOW);
+    Y0.deactivate();
   }
 
   if (bitRead(output, 1) == 1){
-    digitalWrite(Y1, HIGH);
+    Y1.activate();
   }else{
-    digitalWrite(Y1, LOW);
+    Y1.deactivate();
   }
 
   if (bitRead(output, 2) == 1){
-    digitalWrite(Y2, HIGH);
+    Y2.activate();
   }else{
-    digitalWrite(Y2, LOW);
+    Y2.deactivate();
   }
 
   if (bitRead(output, 3) == 1){
-    digitalWrite(Y3, HIGH);
+    Y3.activate();
   }else{
-    digitalWrite(Y3, LOW);
+    Y3.deactivate();
   }
 
   if (bitRead(output, 4) == 1){
-    digitalWrite(Y4, HIGH);
+    Y4.activate();
   }else{
-    digitalWrite(Y4, LOW);
+    Y4.deactivate();
   }
 
   if (bitRead(output, 5) == 1){
-    digitalWrite(Y5, HIGH);
+    Y5.activate();
   }else{
-    digitalWrite(Y5, LOW);
+    Y5.deactivate();
   }
 
   if (bitRead(output, 6) == 1){
-    digitalWrite(Y6, HIGH);
+    Y6.activate();
   }else{
-    digitalWrite(Y6, LOW);
+    Y6.deactivate();
   }
 
   if (bitRead(output, 7) == 1){
-    digitalWrite(Y7, HIGH);
+    Y7.activate();
   }else{
-    digitalWrite(Y7, LOW);
+    Y7.deactivate();
+  }
+}
+
+void encoder_event(){
+  if (X1.isActive()){
+    encoder_count = encoder_count - 1;
+  }else{
+    encoder_count = encoder_count + 1;
   }
 }
 
@@ -278,4 +303,5 @@ void loop() {
     command_action();
   }
   input_update();  
+  X0.button_scan(encoder_event);
 }

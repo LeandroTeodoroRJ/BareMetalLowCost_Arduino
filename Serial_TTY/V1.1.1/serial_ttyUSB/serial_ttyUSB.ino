@@ -41,6 +41,7 @@
 
 #import "gpio.h"
 
+
 #define received_new_data 1
 #define FAST_INPUT DEBOUNCE_NOT_ACTIVE
 #define SLOW_INPUT DEBOUNCE_ACTIVE

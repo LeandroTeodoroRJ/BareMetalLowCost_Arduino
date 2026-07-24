@@ -1,0 +1,12 @@
+** DIGITAL CARD OPEN PLC LIST **
+1x Arduino Nano
+2x Arduino Parallel DuPoint Bar ok
+8x 4N35 Opto-Coupler ok
+16x 4K7 Resistor ok
+8x 10R Resistor ok
+8x 1K Resistor ok
+8x 1N4148 Diode ok
+8x IFR3205 MOSFET ok
+10x Double Terminal Block Connector ok
+16x Green Led ok
+100mm x 100mm Dot Pattern PCB Board ok
