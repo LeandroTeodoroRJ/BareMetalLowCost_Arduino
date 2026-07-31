@@ -5,6 +5,7 @@
  * Version: 1.0.0
  * Last Uptate: 01.08.26
  * Dependences: No
+ *  -- gpio.h v2.0.1
  * Current: Yes
  * Maintainer: leandroteodoro.enganharia@gmail.com
  * Architecture: Arduino Nano
