@@ -24,19 +24,34 @@ void StepMotorDM556::incrementDelay(void){
 }
 
 void StepMotorDM556::step(void){
-  if(this->_direction == 0){
-    this->direction.deactivate();
-  }else{
-    this->direction.activate();
-  }
-  this->_pulse = !this->_pulse;
-  if(this->_pulse == 1){
-    this->pulse.activate();
-  }else{
-    this->pulse.deactivate();
+  if(this->_counter_target != this->_actual_counter){
+    if(this->_direction == 0){
+      this->direction.deactivate();
+    }else{
+      this->direction.activate();
+    }
+    this->_pulse = !this->_pulse;
+    if(this->_pulse == 1){
+      this->pulse.activate();
+    }else{
+      this->pulse.deactivate();
+      if (this->_direction == 0){
+        this->_actual_counter--;      
+      }else{
+        this->_actual_counter++;
+      }
+    }
   }
 }
 
 void StepMotorDM556::setDirection(bool dir){
   this->_direction = dir;
+}
+
+void StepMotorDM556::setTarget(int16_t target){
+  this->_counter_target = target;
+}
+
+void StepMotorDM556::resetCounter(void){
+  this->_actual_counter = 0;
 }

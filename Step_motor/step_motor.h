@@ -13,7 +13,8 @@
  * Changelog: No
  * Readme and Documents: No
  * Links: No
- * Other Notes: No
+ * Other Notes:
+ *   -- This library uses Timer 1 interrupt to execute motor steps motion.
  *
  */
 
@@ -28,8 +29,8 @@
  class StepMotorDM556{
 	private:        
    protected:   
-    uint16_t _counter_target = 0;
-    volatile uint16_t _actual_counter = 0;
+    int16_t _counter_target = 0;
+    int16_t _actual_counter = 0;
     uint16_t _delay_to_pulse = 0;
     bool _pulse = 0;
     bool _direction = 0;
@@ -44,6 +45,8 @@
     void incrementDelay(void); 
     void step(void); 
     void setDirection(bool dir);
+    void setTarget(int16_t target);
+    void resetCounter(void);
  };
   
  #endif	/* GPIO_H */

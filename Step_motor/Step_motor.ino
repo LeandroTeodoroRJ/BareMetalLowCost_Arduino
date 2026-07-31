@@ -27,7 +27,7 @@
 
 #define GPIO_10   10
 #define GPIO_11   11
-#define DELAY_TIME_MS 500
+#define DELAY_TIME_MS 10
 
 StepMotorDM556 motor(GPIO_10, GPIO_11);
 
@@ -41,7 +41,8 @@ void configure_1ms_timer1_interrupt(){
   // Formula: OCR1A = (16MHz / (Prescaler * Desired_Frequency)) - 1
   // Desired frequency for 1ms = 1000 Hz (1 kHz)
   // OCR1A = (16000000 / (64 * 1000)) - 1 = 249
-  OCR1A = 249;
+  // OCR1A = 249;
+  OCR1A = 24;   //To 100us interruption time
 
   // Enable CTC (Clear Timer on Compare Match) mode via WGM12 bit
   TCCR1B |= (1 << WGM12);
@@ -57,14 +58,15 @@ void setup() {
   Serial.begin(115200);   
   noInterrupts(); // Disable global interrupts during configuration
   configure_1ms_timer1_interrupt();  
-  interrupts();  // Re-enable global interrupts
   motor.setDirection(ANTICLOCKWISE);
+  interrupts();  // Re-enable global interrupts  
+  motor.setTarget(-400);
 }
 
 // Timer 1 Interrupt Service Routine (executed exactly every 1 ms)
 ISR(TIMER1_COMPA_vect) {  
   if (DELAY_TIME_MS >= motor.getDelay()){
-    motor.incrementDelay();
+    motor.incrementDelay(); //Wait delay time for motor step velocity
   }else{
     motor.resetDelay();
     motor.step();
@@ -72,7 +74,8 @@ ISR(TIMER1_COMPA_vect) {
 }
 
 void loop() {
-//  Serial.println(" ms");
-  delay(1000); 
+//  Serial.println("OK");
+  delay(20000); 
+//  motor.resetCounter();
 }
 
