@@ -23,6 +23,7 @@
  *  -- To this version X0 is user to rotary encoder Phase A and X1 is used
  *     to Phase B.
  *  -- Modified to execute encoder Phase A by external D2 interrupt
+ *  -- Encoder Pinout: BLK: GND; RED: VCC; WHT: PHA; GRN: PH
  *
  *  Strategies to send hexa byte by serial port
     1- Send as string:
