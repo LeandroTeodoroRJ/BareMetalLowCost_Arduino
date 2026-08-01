@@ -4,7 +4,7 @@
  * Stable: Yes
  * Version: 1.0.0
  * Last Uptate: 01.08.26
- * Dependences: No
+ * Dependences:
  *  -- gpio.h v2.0.1
  * Current: Yes
  * Maintainer: leandroteodoro.enganharia@gmail.com
@@ -50,4 +50,4 @@
     void resetCounter(void);
  };
   
- #endif	/* GPIO_H */
+ #endif	/* STEP_MOTOR_H */
